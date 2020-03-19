@@ -1,13 +1,19 @@
 const graphql = require(`graphql`);
 
-const {GraphQLObjectType,GraphQLString,GraphQLSchema,GraphQLID,GraphQLInt} = graphql;
+const {GraphQLObjectType,GraphQLString,GraphQLSchema,GraphQLID,GraphQLInt,GraphQLList} = graphql;
 
 
 const movies = [
-    {id:`1`,name:`Pulp Fiction`,genre:`Crime`,directorId:`1`},
-    {id:`2`,name:`1984`,genre:`Sci-Fi`,directorId:`2`},
-    {id:3,name:`V for vendetta`,genre:`Action`,directorId:`3`},
-    {id:4,name:`Snatch`,genre:`Crime-comedy`,directorId:`4`},
+    {id:`1`,name:`1`,genre:`Crime`,directorId:`1`},
+    {id:`2`,name:`2`,genre:`Sci-Fi`,directorId:`2`},
+    {id:'3',name:`3`,genre:`Action`,directorId:`3`},
+    {id:'4',name:`4`,genre:`Crime-comedy`,directorId:`4`},
+    {id:'5',name:`5`,genre:`Type-Action`,directorId:`1`},
+    {id:'6',name:`6`,genre:`Horror`,directorId:`2`},
+    {id:'7',name:`7`,genre:`Scary`,directorId:`3`},
+    {id:'8',name:`8`,genre:`Fantasy`,directorId:`4`},
+    {id:'9',name:`9`,genre:`-Action`,directorId:`1`},
+
 ]
 const directors = [
     {id:`1`,name:`Dima`,age:19},
@@ -36,6 +42,14 @@ const DirectorType = new GraphQLObjectType({
       id:{type:GraphQLID},
       name:{type:GraphQLString},
       age:{type:GraphQLInt},
+        movies:
+            {
+                type:new GraphQLList(MovieType),
+                resolve(parent,args)
+                {
+                    return movies.filter(movie=>movie.directorId===parent.id);
+                },
+            },
     }),
 })
 
@@ -58,6 +72,22 @@ const Query = new GraphQLObjectType({
                 return directors.find(director=>director.id === args.id);
             }
         },
+        movies:
+            {
+                type: new GraphQLList(MovieType),
+                resolve(parent,args)
+                {
+                    return movies;
+                }
+            },
+        directors:
+            {
+                type:new GraphQLList(DirectorType),
+                resolve(parent,args)
+                {
+                    return directors;
+                }
+            }
     }
 });
 
